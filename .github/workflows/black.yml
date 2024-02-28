@@ -1,0 +1,17 @@
+name: Black Code Formatter
+
+on: [push, pull_request]
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8" # Python 버전 지정
+      - name: Install black
+        run: pip install black
+      - name: Check code format with black
+        run: black --check .
