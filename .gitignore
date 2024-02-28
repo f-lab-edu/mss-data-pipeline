@@ -1,0 +1,18 @@
+# 가상 환경 폴더
+venv/
+env/
+
+# PyCharm 프로젝트 설정
+.idea/
+
+# 컴파일된 Python 파일
+*.pyc
+
+# Jupyter Notebook 체크포인트
+.ipynb_checkpoints
+
+# macOS 시스템 파일
+.DS_Store
+
+# Windows 시스템 파일
+Thumbs.db
