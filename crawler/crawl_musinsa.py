@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 
-url = "https://www.musinsa.com/app/goods/3268602"
+url = "https://www.musinsa.com/app/goods/3802972"
 
 user_agent = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
@@ -49,7 +49,7 @@ def get_goods_thumbnail_url():
 
 def get_goods_regular_price():
     regular_price = goods_detail.find(
-        "span", attrs={"class": "product-detail__sc-1p1ulhg-7 JZAP"}
+        "span", attrs={"class": "product-detail__sc-1p1ulhg-7"}
     )
     regular_price = regular_price.get_text()
     regular_price = regular_price[:-1]
