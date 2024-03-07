@@ -15,7 +15,7 @@ browser.get(url)
 html = browser.page_source
 browser.quit()
 
-soup = BeautifulSoup(html, "html.parser")
+soup = BeautifulSoup(html, "lxml")
 
 goods_detail = soup.find("div", attrs={"class": "product-detail__sc-8631sn-1 fPAiGD"})
 
