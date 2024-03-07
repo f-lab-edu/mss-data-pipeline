@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
+
 url = "https://www.musinsa.com/app/goods/3268602"
 
 user_agent = {
