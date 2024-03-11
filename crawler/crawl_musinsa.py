@@ -2,52 +2,88 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 
-url = "https://www.musinsa.com/app/goods/3802972"
+def crawl_goods(url):
+    html = get_page_html_from_url(url)
+    soup = get_soup_object_from_html(html)
+    goods_detail = get_detail_segment_from_soup_object(soup)
+    goods_review = get_review_segment_from_soup_object(soup)
+    goods_info = goods_detail.find(
+        "ul", attrs={"class": "product-detail__sc-achptn-1 VIWAI"}
+    ).find_all("li", attrs={"class": "product-detail__sc-achptn-2 idPepF"})
+    infos = dict()
+    for info in goods_info:
+        info = info.get_text(separator="::").split("::")
+        infos[info[0]] = info[1:]
 
-user_agent = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
-}
-chrome_option = webdriver.ChromeOptions()
-chrome_option.add_argument("headless")
-chrome_option.add_argument(f'--user-agent={user_agent["User-Agent"]}')
-chrome_option.add_argument("--disable-gpu")
-browser = webdriver.Chrome(options=chrome_option)
-browser.get(url)
-html = browser.page_source
-browser.quit()
+    goods = []
+    goods.append(get_goods_name(soup))
+    goods.append(get_goods_thumbnail_url(goods_detail))
+    goods.append(get_goods_regular_price(goods_detail))
+    goods.append(get_goods_sale_price(goods_detail))
+    goods.append(get_goods_category(soup))
+    goods.append(get_goods_brand(infos))
+    goods.append(get_goods_views(infos))
+    goods.append(get_goods_sales(infos))
+    goods.append(get_goods_likes(infos))
+    goods.append(get_goods_star_rating(infos))
+    goods.append(get_goods_reviews(infos))
 
-soup = BeautifulSoup(html, "lxml")
-
-goods_detail = soup.find("div", attrs={"class": "product-detail__sc-8631sn-1 fPAiGD"})
-
-goods_info = goods_detail.find(
-    "ul", attrs={"class": "product-detail__sc-achptn-1 VIWAI"}
-).find_all("li", attrs={"class": "product-detail__sc-achptn-2 idPepF"})
-infoes = dict()
-for info in goods_info:
-    info = info.get_text(separator="::").split("::")
-    infoes[info[0]] = info[1:]
-
-review = soup.find("div", attrs={"class": "review-list-wrap"}).find_all(
-    "div", attrs={"class": "review-list"}
-)
+    return goods
 
 
-def get_goods_name():
+def get_page_html_from_url(url):
+    user_agent = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+    }
+    chrome_option = webdriver.ChromeOptions()
+    chrome_option.add_argument("headless")
+    chrome_option.add_argument(f'--user-agent={user_agent["User-Agent"]}')
+    chrome_option.add_argument("--disable-gpu")
+    browser = webdriver.Chrome(options=chrome_option)
+    browser.get(url)
+    html = browser.page_source
+    browser.quit()
+
+    return html
+
+
+def get_soup_object_from_html(html):
+    soup = BeautifulSoup(html, "lxml")
+
+    return soup
+
+
+def get_detail_segment_from_soup_object(soup):
+    goods_detail = soup.find(
+        "div", attrs={"class": "product-detail__sc-8631sn-1 fPAiGD"}
+    )
+
+    return goods_detail
+
+
+def get_review_segment_from_soup_object(soup):
+    review = soup.find("div", attrs={"class": "review-list-wrap"}).find_all(
+        "div", attrs={"class": "review-list"}
+    )
+
+    return review
+
+
+def get_goods_name(soup):
     name = soup.find("h3", attrs={"class": "product-detail__sc-1klhlce-3 fitNPd"})
     name = name.get_text()
     return name
 
 
-def get_goods_thumbnail_url():
+def get_goods_thumbnail_url(goods_detail):
     img_url = goods_detail.find(
         "img", attrs={"class": "product-detail__sc-p62agb-9 cXcZGv"}
     )
-    img_url = img_url.get("src")
-    return img_url
+    img_url_text = img_url.get("src")
+    return img_url_text
 
 
-def get_goods_regular_price():
+def get_goods_regular_price(goods_detail):
     regular_price = goods_detail.find(
         "span", attrs={"class": "product-detail__sc-1p1ulhg-7"}
     )
@@ -56,7 +92,7 @@ def get_goods_regular_price():
     return regular_price
 
 
-def get_goods_sale_price():
+def get_goods_sale_price(goods_detail):
     sale_price = goods_detail.find(
         "span", attrs={"class": "product-detail__sc-1p1ulhg-7 kijFAA"}
     )
@@ -66,7 +102,7 @@ def get_goods_sale_price():
     return sale_price
 
 
-def get_goods_category():
+def get_goods_category(soup):
     all_category = soup.find_all(
         "a", attrs={"class": "product-detail__sc-up77yl-1 doykVD"}
     )
@@ -77,8 +113,8 @@ def get_goods_category():
     return category
 
 
-def get_goods_brand():
-    return infoes["브랜드"][1]  # 0: 품번(텍스트고정), 1: 브랜드이름, 2: 품번
+def get_goods_brand(infos):
+    return infos["브랜드"][1]  # 0: 품번(텍스트고정), 1: 브랜드이름, 2: 품번
 
     # brand = goods_detail.find(
     #     "a", attrs={"class": "product-detail__sc-achptn-9 dEnNme"}
@@ -87,10 +123,10 @@ def get_goods_brand():
     # return brand
 
 
-def get_goods_views():
+def get_goods_views(infos):
     won = {"만": 10000, "천": 1000}
-    if "조회수(1개월)" in infoes:
-        views = infoes["조회수(1개월)"][0]
+    if "조회수(1개월)" in infos:
+        views = infos["조회수(1개월)"][0]
         views = views.split(" ")[0]
 
         if views[-1] in won:
@@ -101,10 +137,10 @@ def get_goods_views():
         return None
 
 
-def get_goods_sales():
+def get_goods_sales(infos):
     won = {"만": 10000, "천": 1000}
-    if "누적판매(1년)" in infoes:
-        sales = infoes["누적판매(1년)"][0]
+    if "누적판매(1년)" in infos:
+        sales = infos["누적판매(1년)"][0]
         sales = sales.split(" ")[0]
 
         if sales[-1] in won:
@@ -115,9 +151,9 @@ def get_goods_sales():
         return None
 
 
-def get_goods_likes():
-    if "좋아요" in infoes:
-        likes = infoes["좋아요"][0]
+def get_goods_likes(infos):
+    if "좋아요" in infos:
+        likes = infos["좋아요"][0]
         return likes
     else:
         return None
@@ -129,9 +165,9 @@ def get_goods_likes():
     # return likes
 
 
-def get_goods_star_rating():
-    if "구매 후기" in infoes:
-        return infoes["구매 후기"][0]  # 0: 별점, 1: 후기 개수
+def get_goods_star_rating(infos):
+    if "구매 후기" in infos:
+        return infos["구매 후기"][0]  # 0: 별점, 1: 후기 개수
     else:
         return None
 
@@ -142,9 +178,9 @@ def get_goods_star_rating():
     # return star_rating
 
 
-def get_goods_reviews():
-    if "구매 후기" in infoes:
-        reviews = infoes["구매 후기"][1]  # 0: 별점, 1: 후기 개수
+def get_goods_reviews(infos):
+    if "구매 후기" in infos:
+        reviews = infos["구매 후기"][1]  # 0: 별점, 1: 후기 개수
         reviews = reviews.split(" ")  # [후기, {개수}개]
         reviews = reviews[1][:-1]
         return reviews
@@ -158,14 +194,4 @@ def get_goods_reviews():
     # return reviews
 
 
-print(get_goods_name())
-print(get_goods_thumbnail_url())
-print(get_goods_regular_price())
-print(get_goods_sale_price())
-print(get_goods_category())
-print(get_goods_brand())
-print(get_goods_views())
-print(get_goods_sales())
-print(get_goods_likes())
-print(get_goods_star_rating())
-print(get_goods_reviews())
+print(crawl_goods("https://www.musinsa.com/app/goods/3802972"))
