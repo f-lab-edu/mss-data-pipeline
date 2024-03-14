@@ -15,7 +15,7 @@ def crawl_goods(url):
         info = info.get_text(separator="::").split("::")
         infos[info[0]] = info[1:]
 
-    goods = []
+    goods = [url.split("/")[-1]]  # goods id
     goods.append(get_goods_name(soup))
     goods.append(get_goods_thumbnail_url(goods_detail))
     goods.append(get_goods_regular_price(goods_detail))
