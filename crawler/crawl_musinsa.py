@@ -89,7 +89,7 @@ def get_goods_regular_price(goods_detail):
     )
     regular_price = regular_price.get_text()
     regular_price = regular_price[:-1]
-    return regular_price
+    return regular_price.replace(",", "")
 
 
 def get_goods_sale_price(goods_detail):
@@ -99,7 +99,7 @@ def get_goods_sale_price(goods_detail):
     sale_price = sale_price.get_text()
     sale_price = sale_price.split(" ~ ")[-1]
     sale_price = sale_price[:-1]
-    return sale_price
+    return sale_price.replace(",", "")
 
 
 def get_goods_category(soup):
@@ -154,7 +154,7 @@ def get_goods_sales(infos):
 def get_goods_likes(infos):
     if "좋아요" in infos:
         likes = infos["좋아요"][0]
-        return likes
+        return likes.replace(",", "")
     else:
         return None
 
@@ -183,7 +183,7 @@ def get_goods_reviews(infos):
         reviews = infos["구매 후기"][1]  # 0: 별점, 1: 후기 개수
         reviews = reviews.split(" ")  # [후기, {개수}개]
         reviews = reviews[1][:-1]
-        return reviews
+        return reviews.replace(",", "")
     else:
         return None
 
@@ -192,6 +192,3 @@ def get_goods_reviews(infos):
     # )
     # reviews = reviews.get_text()
     # return reviews
-
-
-print(crawl_goods("https://www.musinsa.com/app/goods/3802972"))
