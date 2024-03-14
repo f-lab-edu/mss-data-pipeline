@@ -7,11 +7,12 @@ main_thumbnail_url VARCHAR,
 regular_price INTEGER NOT NULL,
 sale_price INTEGER NOT NULL,
 category VARCHAR,
+sub_category VARCHAR,
 brand VARCHAR NOT NULL,
 view_in_recent_month INTEGER,
 sales_in_recent_year INTEGER,
 likes INTEGER,
-star_rating INTEGER,
+star_rating numeric(1, 1),
 reviews INTEGER,
 created_at TIMESTAMP NOT NULL
 );
