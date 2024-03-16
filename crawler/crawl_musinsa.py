@@ -134,7 +134,7 @@ def get_goods_views(infos):
             views = float(num) * won[views[-1]]
         return int(views)
     else:
-        return None
+        return "NULL"
 
 
 def get_goods_sales(infos):
@@ -148,7 +148,7 @@ def get_goods_sales(infos):
             sales = float(num) * won[sales[-1]]
         return int(sales)
     else:
-        return None
+        return "NULL"
 
 
 def get_goods_likes(infos):
@@ -156,7 +156,7 @@ def get_goods_likes(infos):
         likes = infos["좋아요"][0]
         return likes.replace(",", "")
     else:
-        return None
+        return "NULL"
 
     # likes = goods_detail.find(
     #     "span", attrs={"class": "product-detail__sc-achptn-4 coaOzR"}
@@ -169,7 +169,7 @@ def get_goods_star_rating(infos):
     if "구매 후기" in infos:
         return infos["구매 후기"][0]  # 0: 별점, 1: 후기 개수
     else:
-        return None
+        return "NULL"
 
     # star_rating = goods_detail.find(
     #     "span", attrs={"class": "product-detail__sc-achptn-4 bfPlAf"}
@@ -185,7 +185,7 @@ def get_goods_reviews(infos):
         reviews = reviews[1][:-1]
         return reviews.replace(",", "")
     else:
-        return None
+        return "NULL"
 
     # reviews = goods_detail.find(
     #     "span", attrs={"class": "product-detail__sc-achptn-4 fgobnC"}
