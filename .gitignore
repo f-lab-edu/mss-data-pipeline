@@ -2,6 +2,9 @@
 venv/
 env/
 
+##
+test.py
+
 # PyCharm 프로젝트 설정
 .idea/
 
