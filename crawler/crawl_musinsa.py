@@ -94,7 +94,7 @@ def get_goods_regular_price(goods_detail):
 
 def get_goods_sale_price(goods_detail):
     sale_price = goods_detail.find(
-        "span", attrs={"class": "product-detail__sc-1p1ulhg-7 kijFAA"}
+        "span", attrs={"class": "product-detail__sc-1p1ulhg-7"}
     )
     sale_price = sale_price.get_text()
     sale_price = sale_price.split(" ~ ")[-1]
