@@ -1,11 +1,20 @@
+from dotenv import load_dotenv
+import os
+
 import psycopg2
 from datetime import datetime, timezone
 
 from crawler.crawl_musinsa import crawl_goods
 from crawler.list_crawler import get_goods_url_from_list_page
 
+
+load_dotenv()
 db = psycopg2.connect(
-    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+    host=os.environ.get('dw_host'),
+    dbname=os.environ.get('dw_dbname'),
+    user=os.environ.get('dw_user'),
+    password=os.environ.get('dw_password'),
+    port=os.environ.get('dw_port')
 )
 cursor = db.cursor()
 
