@@ -43,6 +43,8 @@ def get_page_html_from_url(url):
     chrome_option.add_argument("--disable-gpu")
     browser = webdriver.Chrome(options=chrome_option)
     browser.get(url)
+    while browser.execute_script("return document.readyState;") != "complete":
+        pass
     html = browser.page_source
     browser.quit()
 
