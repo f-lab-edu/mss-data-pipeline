@@ -1,9 +1,15 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def crawl_goods(url):
-    html = get_page_html_from_url(url)
+    try:
+        html = get_page_html_from_url(url)
+    except Exception as e:
+        print(e, url)
     soup = get_soup_object_from_html(html)
     goods_detail = get_detail_segment_from_soup_object(soup)
     goods_review = get_review_segment_from_soup_object(soup)
@@ -43,8 +49,10 @@ def get_page_html_from_url(url):
     chrome_option.add_argument("--disable-gpu")
     browser = webdriver.Chrome(options=chrome_option)
     browser.get(url)
-    while browser.execute_script("return document.readyState;") != "complete":
-        pass
+    WebDriverWait(browser, 20).until(
+        EC.presence_of_element_located((By.ID, "reviewListFragment"))
+    )
+
     html = browser.page_source
     browser.quit()
 
