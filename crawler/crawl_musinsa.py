@@ -138,14 +138,15 @@ def get_goods_views(infos):
 
 
 def get_goods_sales(infos):
-    won = {"만": 10000, "천": 1000}
+    won = {"만": 10000, "천": 1000, "개": 1}
     if "누적판매(1년)" in infos:
         sales = infos["누적판매(1년)"][0]
         sales = sales.split(" ")[0]
 
         if sales[-1] in won:
             num = sales[:-1]
-            sales = float(num) * won[sales[-1]]
+            scale = sales[-1]
+            sales = float(num) * won[scale]
         return int(sales)
     else:
         return "NULL"
