@@ -36,7 +36,9 @@ def get_page_html_from_url(url):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
     }
     chrome_option = webdriver.ChromeOptions()
-    chrome_option.add_argument("headless")
+    chrome_option.add_argument("--headless")
+    chrome_option.add_argument("--no-sandbox")
+    chrome_option.add_argument("--disable-dev-shm-usage")
     chrome_option.add_argument(f'--user-agent={user_agent["User-Agent"]}')
     chrome_option.add_argument("--disable-gpu")
     browser = webdriver.Chrome(options=chrome_option)
