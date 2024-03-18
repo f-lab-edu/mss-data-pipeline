@@ -23,7 +23,7 @@ goods_id INTEGER ,
 content VARCHAR NOT NULL,
 main_thumbnail_url VARCHAR,
 likes INTEGER,
-create_at TIMESTAMP NOT NULL
+created_at TIMESTAMP NOT NULL
 );
 
 ALTER TABLE review ADD CONSTRAINT review_good_id_fk FOREIGN KEY (goods_id) REFERENCES goods(goods_id);
