@@ -2,7 +2,7 @@
 venv/
 env/
 
-##
+# 수동으로 test하는 파일
 test.py
 
 # PyCharm 프로젝트 설정
@@ -19,3 +19,6 @@ test.py
 
 # Windows 시스템 파일
 Thumbs.db
+
+# 환경변수 파일
+.env
