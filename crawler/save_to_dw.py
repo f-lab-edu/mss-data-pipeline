@@ -19,11 +19,15 @@ def create_insert_query(goods):
     return query
 
 
-for i in range(1, 21):  # 무신사 사이트의 대분류는 1~21
+for i in range(2, 21):  # 무신사 사이트의 대분류는 1~21
     category_id = f"0{i}" if i >= 10 else f"00{i}"
     url = f"https://www.musinsa.com/categories/item/{category_id}"
     for goods_url in get_goods_url_from_list_page(url):
-        goods = crawl_goods(goods_url)
+        try:
+            goods = crawl_goods(goods_url)
+        except Exception as e:
+            print(e, goods_url)
+            continue
         sql = create_insert_query(goods)
         print(sql)
         try:

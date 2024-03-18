@@ -6,10 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 def crawl_goods(url):
-    try:
-        html = get_page_html_from_url(url)
-    except Exception as e:
-        print(e, url)
+    html = get_page_html_from_url(url)
     soup = get_soup_object_from_html(html)
     goods_detail = get_detail_segment_from_soup_object(soup)
     goods_review = get_review_segment_from_soup_object(soup)
@@ -126,7 +123,9 @@ def get_goods_category(soup):
 
 
 def get_goods_brand(infos):
-    return infos["브랜드"][1].replace("'", "''")  # 0: 품번(텍스트고정), 1: 브랜드이름, 2: 품번
+    return infos["브랜드"][1].replace(
+        "'", "''"
+    )  # 0: 품번(텍스트고정), 1: 브랜드이름, 2: 품번
 
     # brand = goods_detail.find(
     #     "a", attrs={"class": "product-detail__sc-achptn-9 dEnNme"}
