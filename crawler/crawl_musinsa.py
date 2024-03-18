@@ -84,7 +84,7 @@ def get_review_segment_from_soup_object(soup):
 def get_goods_name(soup):
     name = soup.find("h3", attrs={"class": "product-detail__sc-1klhlce-3 fitNPd"})
     name = name.get_text()
-    return name
+    return name.replace("'", "''")
 
 
 def get_goods_thumbnail_url(goods_detail):
@@ -126,7 +126,7 @@ def get_goods_category(soup):
 
 
 def get_goods_brand(infos):
-    return infos["브랜드"][1]  # 0: 품번(텍스트고정), 1: 브랜드이름, 2: 품번
+    return infos["브랜드"][1].replace("'", "''")  # 0: 품번(텍스트고정), 1: 브랜드이름, 2: 품번
 
     # brand = goods_detail.find(
     #     "a", attrs={"class": "product-detail__sc-achptn-9 dEnNme"}
