@@ -29,6 +29,6 @@ for i in range(1, 21):  # 무신사 사이트의 대분류는 1~21
         try:
             cursor.execute(sql)
         except Exception as e:
-            print(e, "\n", goods_url)
+            print(e, goods_url)
 
         db.commit()
