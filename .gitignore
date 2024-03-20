@@ -4,6 +4,7 @@ env/
 
 # 수동으로 test하는 파일
 test.py
+test.ipynb
 
 # PyCharm 프로젝트 설정
 .idea/
