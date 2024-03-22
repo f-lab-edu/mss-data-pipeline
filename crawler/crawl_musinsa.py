@@ -18,18 +18,18 @@ def crawl_goods(url):
         info = info.get_text(separator="::").split("::")
         infos[info[0]] = info[1:]
 
-    goods = [url.split("/")[-1]]  # goods id
-    goods.append(get_goods_name(soup))
-    goods.append(get_goods_thumbnail_url(goods_detail))
-    goods.append(get_goods_regular_price(goods_detail))
-    goods.append(get_goods_sale_price(goods_detail))
-    goods.append(get_goods_category(soup))
-    goods.append(get_goods_brand(infos))
-    goods.append(get_goods_views(infos))
-    goods.append(get_goods_sales(infos))
-    goods.append(get_goods_likes(infos))
-    goods.append(get_goods_star_rating(infos))
-    goods.append(get_goods_reviews(infos))
+    goods = {"goods_id": url.split("/")[-1]}  # goods id
+    goods["name"] = get_goods_name(soup)
+    goods["thumbnail_url"] = get_goods_thumbnail_url(goods_detail)
+    goods["regular_price"] = get_goods_regular_price(goods_detail)
+    goods["sale_price"] = get_goods_sale_price(goods_detail)
+    goods["category"] = get_goods_category(soup)
+    goods["brand"] = get_goods_brand(infos)
+    goods["views"] = get_goods_views(infos)
+    goods["sales"] = get_goods_sales(infos)
+    goods["likes"] = get_goods_likes(infos)
+    goods["star_rating"] = get_goods_star_rating(infos)
+    goods["reviews"] = get_goods_reviews(infos)
 
     return goods
 

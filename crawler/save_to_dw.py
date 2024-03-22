@@ -23,7 +23,7 @@ def create_insert_query(goods):
     dt = datetime.now(timezone.utc)
     query = (
         f"INSERT INTO goods(goods_id, name, main_thumbnail_url, regular_price, sale_price, category, sub_category, brand, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
-        f"VALUES({goods[0]}, '{goods[1]}', '{goods[2]}', {goods[3]}, {goods[4]}, '{goods[5][0]}', '{goods[5][1]}', '{goods[6]}', {goods[7]}, {goods[8]}, {goods[9]}, {goods[10]}, {goods[11]}, '{dt}')"
+        f"VALUES({goods['goods_id']}, '{goods['name']}', '{goods['thumbnail_url']}', {goods['regular_price']}, {goods['sale_price']}, '{goods['category'][0]}', '{goods['category'][1]}', '{goods['brand']}', {goods['views']}, {goods['sales']}, {goods['likes']}, {goods['star_rating']}, {goods['reviews']}, '{dt}')"
     )
     return query
 
