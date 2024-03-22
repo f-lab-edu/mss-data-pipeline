@@ -12,7 +12,7 @@ created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE review(
-review_id INTEGER PRIMARY KEY,
+review_id INTEGER PRIMARY KEY DEFAULT uuid_generate_v4(),
 goods_id INTEGER ,
 content VARCHAR NOT NULL,
 main_thumbnail_url VARCHAR,
@@ -21,7 +21,7 @@ created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE mutable_goods_info(
-    mutable_goods_info_id INTEGER PRIMARY KEY,
+    mutable_goods_info_id INTEGER PRIMARY KEY DEFAULT uuid_generate_v4(),
     goods_id INTEGER,
     sale_price INTEGER NOT NULL,
     view_in_recent_month INTEGER,
@@ -30,7 +30,7 @@ CREATE TABLE mutable_goods_info(
     star_rating INTEGER,
     reviews INTEGER,
     created_at TIMESTAMP NOT NULL
-)
+);
 
 ALTER TABLE review ADD CONSTRAINT review_goods_id_fk FOREIGN KEY (goods_id) REFERENCES immutable_goods_info(goods_id);
 ALTER TABLE mutable_goods_info ADD CONSTRAINT mutable_goods_info_goods_id_fk FOREIGN KEY (goods_id) REFERENCES immutable_goods_info(goods_id);
