@@ -1,5 +1,7 @@
 -- postgres create table sql
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE immutable_goods_info(
 goods_id INTEGER PRIMARY KEY,
 name VARCHAR NOT NULL,
