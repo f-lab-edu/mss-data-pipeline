@@ -19,11 +19,20 @@ db = psycopg2.connect(
 cursor = db.cursor()
 
 
-def create_insert_query(goods):
+def create_immutable_goods_info_insert_query(goods):
     dt = datetime.now(timezone.utc)
     query = (
-        f"INSERT INTO goods(goods_id, name, main_thumbnail_url, regular_price, sale_price, category, sub_category, brand, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
-        f"VALUES({goods['goods_id']}, '{goods['name']}', '{goods['thumbnail_url']}', {goods['regular_price']}, {goods['sale_price']}, '{goods['category'][0]}', '{goods['category'][1]}', '{goods['brand']}', {goods['views']}, {goods['sales']}, {goods['likes']}, {goods['star_rating']}, {goods['reviews']}, '{dt}')"
+        f"INSERT INTO immutable_goods_info(goods_id, name, main_thumbnail_url, regular_price, category, sub_category, brand, created_at) "
+        f"VALUES({goods['goods_id']}, '{goods['name']}', '{goods['thumbnail_url']}', {goods['regular_price']}, '{goods['category'][0]}', '{goods['category'][1]}', '{goods['brand']}', '{dt}')"
+    )
+    return query
+
+
+def create_mutable_goods_info_insert_query(goods):
+    dt = datetime.now(timezone.utc)
+    query = (
+        f"INSERT INTO mutable_goods_info(goods_id, sale_price, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
+        f"VALUES({goods['goods_id']}, {goods['sale_price']}, {goods['views']}, {goods['sales']}, {goods['likes']}, {goods['star_rating']}, {goods['reviews']}, '{dt}')"
     )
     return query
 
@@ -37,7 +46,16 @@ for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
         except Exception as e:
             print(e, goods_url)
             continue
-        sql = create_insert_query(goods)
+        sql = create_immutable_goods_info_insert_query(goods)
+        print(sql)
+        try:
+            cursor.execute(sql)
+        except Exception as e:
+            print(e, goods_url)
+
+        db.commit()
+
+        sql = create_mutable_goods_info_insert_query(goods)
         print(sql)
         try:
             cursor.execute(sql)
