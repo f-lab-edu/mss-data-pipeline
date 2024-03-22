@@ -26,7 +26,7 @@ CREATE TABLE mutable_goods_info(
     mutable_goods_info_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     goods_id INTEGER,
     sale_price INTEGER NOT NULL,
-    view_in_recent_month INTEGER,
+    views_in_recent_month INTEGER,
     sales_in_recent_year INTEGER,
     likes INTEGER,
     star_rating INTEGER,
