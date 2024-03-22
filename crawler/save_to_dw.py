@@ -10,11 +10,11 @@ from crawler.list_crawler import get_goods_url_from_list_page
 
 load_dotenv()
 db = psycopg2.connect(
-    host=os.environ.get('dw_host'),
-    dbname=os.environ.get('dw_dbname'),
-    user=os.environ.get('dw_user'),
-    password=os.environ.get('dw_password'),
-    port=os.environ.get('dw_port')
+    host=os.environ.get("dw_host"),
+    dbname=os.environ.get("dw_dbname"),
+    user=os.environ.get("dw_user"),
+    password=os.environ.get("dw_password"),
+    port=os.environ.get("dw_port"),
 )
 cursor = db.cursor()
 
@@ -28,7 +28,7 @@ def create_insert_query(goods):
     return query
 
 
-for i in range(2, 21):  # 무신사 사이트의 대분류는 1~21
+for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
     category_id = f"0{i}" if i >= 10 else f"00{i}"
     url = f"https://www.musinsa.com/categories/item/{category_id}"
     for goods_url in get_goods_url_from_list_page(url):
