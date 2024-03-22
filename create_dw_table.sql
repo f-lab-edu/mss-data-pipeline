@@ -14,7 +14,7 @@ created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE review(
-review_id INTEGER PRIMARY KEY DEFAULT uuid_generate_v4(),
+review_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 goods_id INTEGER ,
 content VARCHAR NOT NULL,
 main_thumbnail_url VARCHAR,
@@ -23,7 +23,7 @@ created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE mutable_goods_info(
-    mutable_goods_info_id INTEGER PRIMARY KEY DEFAULT uuid_generate_v4(),
+    mutable_goods_info_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     goods_id INTEGER,
     sale_price INTEGER NOT NULL,
     view_in_recent_month INTEGER,
