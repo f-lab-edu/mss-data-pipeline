@@ -29,7 +29,7 @@ CREATE TABLE mutable_goods_info(
     likes INTEGER,
     star_rating INTEGER,
     reviews INTEGER,
-    create_at TIMESTAMP NOT NULL
+    created_at TIMESTAMP NOT NULL
 )
 
 ALTER TABLE review ADD CONSTRAINT review_goods_id_fk FOREIGN KEY (goods_id) REFERENCES immutable_goods_info(goods_id);
