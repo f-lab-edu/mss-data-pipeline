@@ -46,20 +46,22 @@ for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
         except Exception as e:
             print(e, goods_url)
             continue
-        sql = create_immutable_goods_info_insert_query(goods)
-        print(sql)
+
+        immutable_goods_info_insert_query = create_immutable_goods_info_insert_query(
+            goods
+        )
+        mutable_goods_info_insert_query = create_mutable_goods_info_insert_query(goods)
+        print(immutable_goods_info_insert_query)
+        print(mutable_goods_info_insert_query)
+
         try:
-            cursor.execute(sql)
+            cursor.execute(immutable_goods_info_insert_query)
+            db.commit()
         except Exception as e:
             print(e, goods_url)
 
-        db.commit()
-
-        sql = create_mutable_goods_info_insert_query(goods)
-        print(sql)
         try:
-            cursor.execute(sql)
+            cursor.execute(mutable_goods_info_insert_query)
+            db.commit()
         except Exception as e:
             print(e, goods_url)
-
-        db.commit()
