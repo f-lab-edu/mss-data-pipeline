@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 
 import psycopg2
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from crawler.crawl_musinsa import crawl_goods
 from crawler.list_crawler import get_goods_url_from_list_page
@@ -19,13 +19,30 @@ db = psycopg2.connect(
 cursor = db.cursor()
 
 
-def create_insert_query(goods):
-    dt = datetime.now(timezone.utc)
+def create_immutable_goods_info_insert_query(goods):
+    dt = datetime.now(timezone(timedelta(hours=9)))
     query = (
-        f"INSERT INTO goods(goods_id, name, main_thumbnail_url, regular_price, sale_price, category, sub_category, brand, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
-        f"VALUES({goods[0]}, '{goods[1]}', '{goods[2]}', {goods[3]}, {goods[4]}, '{goods[5][0]}', '{goods[5][1]}', '{goods[6]}', {goods[7]}, {goods[8]}, {goods[9]}, {goods[10]}, {goods[11]}, '{dt}')"
+        f"INSERT INTO immutable_goods_info(goods_id, name, main_thumbnail_url, regular_price, category, sub_category, brand, created_at) "
+        f"VALUES({goods['goods_id']}, '{goods['name']}', '{goods['thumbnail_url']}', {goods['regular_price']}, '{goods['category'][0]}', '{goods['category'][1]}', '{goods['brand']}', '{dt}')"
     )
     return query
+
+
+def create_mutable_goods_info_insert_query(goods):
+    dt = datetime.now(timezone(timedelta(hours=9)))
+    query = (
+        f"INSERT INTO mutable_goods_info(goods_id, sale_price, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
+        f"VALUES({goods['goods_id']}, {goods['sale_price']}, {goods['views']}, {goods['sales']}, {goods['likes']}, {goods['star_rating']}, {goods['reviews']}, '{dt}')"
+    )
+    return query
+
+
+def call_db(sql):
+    try:
+        cursor.execute(sql)
+        db.commit()
+    except Exception as e:
+        print(e, goods_url)
 
 
 for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
@@ -37,11 +54,13 @@ for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
         except Exception as e:
             print(e, goods_url)
             continue
-        sql = create_insert_query(goods)
-        print(sql)
-        try:
-            cursor.execute(sql)
-        except Exception as e:
-            print(e, goods_url)
 
-        db.commit()
+        immutable_goods_info_insert_query = create_immutable_goods_info_insert_query(
+            goods
+        )
+        mutable_goods_info_insert_query = create_mutable_goods_info_insert_query(goods)
+        print(immutable_goods_info_insert_query)
+        print(mutable_goods_info_insert_query)
+
+        call_db(immutable_goods_info_insert_query)
+        call_db(mutable_goods_info_insert_query)
