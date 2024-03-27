@@ -27,4 +27,4 @@ jobs:
 
       - name: run crawler
         run: |
-          python crawler/save_to_dw.py
+          python -m crawler.save_to_dw
