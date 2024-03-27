@@ -1,8 +1,7 @@
 name: crawl mss
 
 on:
-  schedule:
-    - cron: '0 15 * * *'
+  workflow_dispatch
 
 jobs:
   send:
@@ -24,7 +23,7 @@ jobs:
       - name: Create .env
         run: |
           touch ./automation/discord-bot/fee-bot/.env
-          echo "${{ secrets.FEE_ENV }}" > ./automation/discord-bot/fee-bot/.env
+          echo "${{ secrets.CRAWL_ENV }}" > .env
 
       - name: run crawler
         run: |
