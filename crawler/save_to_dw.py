@@ -40,9 +40,10 @@ def create_mutable_goods_info_insert_query(goods):
 def call_db(sql):
     try:
         cursor.execute(sql)
-        db.commit()
     except Exception as e:
         print(e, goods_url)
+    finally:
+        db.commit()
 
 
 for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
