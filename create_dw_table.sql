@@ -29,7 +29,7 @@ CREATE TABLE mutable_goods_info(
     views_in_recent_month INTEGER,
     sales_in_recent_year INTEGER,
     likes INTEGER,
-    star_rating INTEGER,
+    star_rating numeric(2, 1),
     reviews INTEGER,
     created_at TIMESTAMP NOT NULL
 );
