@@ -30,6 +30,9 @@ def crawl_goods(url):
     goods["likes"] = get_goods_likes(infos)
     goods["star_rating"] = get_goods_star_rating(infos)
     goods["reviews"] = get_goods_reviews(infos)
+    goods["review_content"] = get_goods_review_content(goods_review)
+    goods["review_thumbnail_url"] = get_goods_review_thumbnail_url(goods_review)
+    goods["review_likes"] = get_goods_review_likes(goods_review)
 
     return goods
 
@@ -204,3 +207,28 @@ def get_goods_reviews(infos):
     # )
     # reviews = reviews.get_text()
     # return reviews
+
+
+def get_goods_review_content(goods_reviews):
+    content = [
+        goods_review.find("div", "review-contents__text").get_text(separator="\n")
+        for goods_review in goods_reviews
+    ]
+    return content
+
+
+def get_goods_review_thumbnail_url(goods_reviews):
+    img_url = [
+        "https:"
+        + goods_review.find("li", "review-content-photo__item").find("img").get("src")
+        for goods_review in goods_reviews
+    ]
+    return img_url
+
+
+def get_goods_review_likes(goods_reviews):
+    likes = [
+        goods_review.find("span", "review-evaluation-button--type3__count").get_text()
+        for goods_review in goods_reviews
+    ]
+    return likes

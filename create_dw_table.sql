@@ -14,8 +14,8 @@ created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE review(
-review_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-goods_id INTEGER ,
+review_id INTEGER PRIMARY KEY,
+goods_id INTEGER,
 content VARCHAR NOT NULL,
 main_thumbnail_url VARCHAR,
 likes INTEGER,

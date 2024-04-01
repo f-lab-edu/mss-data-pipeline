@@ -37,9 +37,28 @@ def create_mutable_goods_info_insert_query(goods):
     return query
 
 
+def create_review_insert_query(goods):
+    dt = datetime.now(timezone(timedelta(hours=9)))
+    queries = []
+    for text, url, likes in zip(
+        goods["review_content"], goods["review_thumbnail_url"], goods["review_likes"]
+    ):
+        queries.append(
+            f"INSERT INTO review(review_id, goods_id, content, main_thumbnail_url, likes, created_at)"
+            f"VALUES(hashtext('{text}'), {goods['goods_id']}, E'{text}', '{url}', {likes}, '{dt}')"
+        )
+
+    return queries
+
+
 def call_db(sql):
     try:
-        cursor.execute(sql)
+        print(sql)
+        if isinstance(sql, list):
+            for query in sql:
+                cursor.execute(query)
+        else:
+            cursor.execute(sql)
     except Exception as e:
         print(e, goods_url)
     finally:
@@ -60,8 +79,8 @@ for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
             goods
         )
         mutable_goods_info_insert_query = create_mutable_goods_info_insert_query(goods)
-        print(immutable_goods_info_insert_query)
-        print(mutable_goods_info_insert_query)
+        review_insert_query = create_review_insert_query(goods)
 
         call_db(immutable_goods_info_insert_query)
         call_db(mutable_goods_info_insert_query)
+        call_db(review_insert_query)
