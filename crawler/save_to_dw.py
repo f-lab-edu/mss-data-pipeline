@@ -84,5 +84,3 @@ for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
         call_db(immutable_goods_info_insert_query)
         call_db(mutable_goods_info_insert_query)
         call_db(review_insert_query)
-        break
-    break
