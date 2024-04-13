@@ -96,19 +96,19 @@ def get_goods_thumbnail_url(goods_detail):
 
 
 def get_goods_regular_price(goods_detail):
-    regular_price = goods_detail.find(
+    regular_price = goods_detail.find_all(
         "span", attrs={"class": "product-detail__sc-1p1ulhg-7"}
     )
-    regular_price = regular_price.get_text()
+    regular_price = regular_price[0].get_text()
     regular_price = regular_price[:-1]
     return regular_price.replace(",", "")
 
 
 def get_goods_sale_price(goods_detail):
-    sale_price = goods_detail.find(
+    sale_price = goods_detail.find_all(
         "span", attrs={"class": "product-detail__sc-1p1ulhg-7"}
     )
-    sale_price = sale_price.get_text()
+    sale_price = sale_price[1].get_text()
     sale_price = sale_price.split(" ~ ")[-1]
     sale_price = sale_price[:-1]
     return sale_price.replace(",", "")
