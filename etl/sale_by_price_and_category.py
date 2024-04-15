@@ -80,7 +80,6 @@ def main():
     )
 
     df = transform_data(goods_joined)
-    df.show()
     load_data(df)
 
 
