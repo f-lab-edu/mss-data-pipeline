@@ -27,8 +27,8 @@ def extract_data(spark, table_name):
 
 def transform_data(df):
     bucketizer = Bucketizer(
-        splits=[x for x in range(0, 1000000, 10000)],
-        inputCol="regular_price",
+        splits=[x for x in range(0, 1000001, 10000)] + [float("inf")],
+        inputCol="sale_price",
         outputCol="price_range",
     )
 
@@ -81,6 +81,7 @@ def main():
 
     df = transform_data(goods_joined)
     df.show()
+    load_data(df)
 
 
 if __name__ == "__main__":
