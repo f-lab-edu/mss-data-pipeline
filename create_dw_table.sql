@@ -36,3 +36,12 @@ CREATE TABLE mutable_goods_info(
 
 ALTER TABLE review ADD CONSTRAINT review_goods_id_fk FOREIGN KEY (goods_id) REFERENCES immutable_goods_info(goods_id);
 ALTER TABLE mutable_goods_info ADD CONSTRAINT mutable_goods_info_goods_id_fk FOREIGN KEY (goods_id) REFERENCES immutable_goods_info(goods_id);
+
+CREATE Table sales_by_price_and_category
+(
+    goods_id integer,
+    category varchar,
+    sales integer,
+    price_range integer,
+    PRIMARY KEY (goods_id, price_range)
+);
