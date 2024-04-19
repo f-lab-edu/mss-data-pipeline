@@ -109,7 +109,6 @@ def main():
 
     df = transform_data(goods_joined)
     distinct_df = df.drop_duplicates(["goods_id", "price_range"])
-    distinct_df.show()
     distinct_df.foreachPartition(load_data)
 
 
