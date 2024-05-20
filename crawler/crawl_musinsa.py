@@ -1,3 +1,5 @@
+import requests
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -232,3 +234,22 @@ def get_goods_review_likes(goods_reviews):
         for goods_review in goods_reviews
     ]
     return likes
+
+
+def get_goods_review_comments(goods_id):
+    page_num = 0
+    while True:
+        page_num += 1
+        url = f"https://goods.musinsa.com/api/goods/v2/review/style/list?similarNo={goods_id}&sort=up_cnt_desc&selectedSimilarNo={goods_id}&page={page_num}&goodsNo={goods_id}"
+        reviews = requests.get(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+            },
+        )
+
+        reviews = reviews.text
+        if len(reviews) == 370:  # 후기가 없는 페이지일 경우
+            break
+
+        yield reviews
