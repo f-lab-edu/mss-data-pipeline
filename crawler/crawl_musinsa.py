@@ -236,20 +236,23 @@ def get_goods_review_likes(goods_reviews):
     return likes
 
 
-def get_goods_review_comments(goods_id):
-    page_num = 0
-    while True:
-        page_num += 1
-        url = f"https://goods.musinsa.com/api/goods/v2/review/style/list?similarNo={goods_id}&sort=up_cnt_desc&selectedSimilarNo={goods_id}&page={page_num}&goodsNo={goods_id}"
-        reviews = requests.get(
-            url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-            },
-        )
+def get_goods_review(goods_id):
+    for category in ["style", "photo", "goods"]:
+        page_num = 0
+        while True:
+            page_num += 1
+            url = f"https://goods.musinsa.com/api/goods/v2/review/{category}/list?similarNo={goods_id}&sort=up_cnt_desc&selectedSimilarNo={goods_id}&page={page_num}&goodsNo={goods_id}"
+            reviews = requests.get(
+                url,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+                },
+            )
 
-        reviews = reviews.text
-        if len(reviews) == 370:  # 후기가 없는 페이지일 경우
-            break
+            reviews = reviews.text
+            reviews = get_soup_object_from_html(reviews)
+            is_no_review = reviews.find("p", class_="review-list--none__text")
+            if is_no_review:  # 후기가 없는 페이지일 경우
+                break
 
-        yield reviews
+            yield reviews.prettify(), page_num, category
