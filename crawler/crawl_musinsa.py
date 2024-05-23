@@ -1,10 +1,14 @@
 import requests
+from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+from crawler.util.postgresql import select_data, manipulate_data
+from crawler.util.date import subtract_date
 
 
 def crawl_goods(url):
@@ -237,11 +241,25 @@ def get_goods_review_likes(goods_reviews):
 
 
 def get_goods_review(goods_id):
-    for category in ["style", "photo", "goods"]:
+    for i, category in enumerate(["style", "photo", "goods"], 1):
         page_num = 0
+
+        most_recently_created_review = select_data(
+            f"select * from most_recently_posted_review \
+              where goods_id ={goods_id}"
+        )
+        if most_recently_created_review:
+            most_recently_created_review = most_recently_created_review[0][i]
+        else:  # 처음보는 상품일경우
+            most_recently_created_review = datetime.strptime("1990-01-01", "%Y-%m-%d")
+            manipulate_data(
+                f"insert into most_recently_posted_review \
+                             values ({goods_id}, {most_recently_created_review}, {most_recently_created_review}, {most_recently_created_review})"
+            )
+
         while True:
             page_num += 1
-            url = f"https://goods.musinsa.com/api/goods/v2/review/{category}/list?similarNo={goods_id}&sort=up_cnt_desc&selectedSimilarNo={goods_id}&page={page_num}&goodsNo={goods_id}"
+            url = f"https://goods.musinsa.com/api/goods/v2/review/{category}/list?similarNo={goods_id}&sort=new&selectedSimilarNo={goods_id}&page={page_num}&goodsNo={goods_id}"
             reviews = requests.get(
                 url,
                 headers={
@@ -254,5 +272,32 @@ def get_goods_review(goods_id):
             is_no_review = reviews.find("p", class_="review-list--none__text")
             if is_no_review:  # 후기가 없는 페이지일 경우
                 break
+
+            created_at = reviews.find("p", class_="review-profile__date").text
+            if created_at is None:
+                yield reviews.prettify(), page_num, category
+                break
+
+            if created_at[-1] == "전":
+                today = datetime.now()
+                if "시간" in created_at:
+                    created_at = subtract_date(today, 1)
+                else:
+                    if created_at[1] == "일":
+                        created_at = subtract_date(today, created_at[0])
+                    else:
+                        created_at = subtract_date(today, created_at[:2])
+
+            if created_at <= most_recently_created_review:
+                break
+
+            if (
+                page_num == 1
+            ):  # 가장 최신 댓글을 가지고 있는 첫 페이지에서만 row값을 업데이트
+                manipulate_data(
+                    f"update most_recently_posted_review \
+                      set {category} = TO_DATE('{created_at.strptime('%Y%m%d')}', 'YYYYMMDD') \
+                      where goods_id = {goods_id}"
+                )
 
             yield reviews.prettify(), page_num, category
