@@ -251,10 +251,12 @@ def get_goods_review(goods_id):
         if most_recently_created_review:
             most_recently_created_review = most_recently_created_review[0][i]
         else:  # 처음보는 상품일경우
-            most_recently_created_review = datetime.strptime("1990-01-01", "%Y-%m-%d")
+            most_recently_created_review = datetime.strptime(
+                "1990-01-01", "%Y-%m-%d"
+            ).date()
             manipulate_data(
                 f"insert into most_recently_posted_review \
-                             values ({goods_id}, {most_recently_created_review}, {most_recently_created_review}, {most_recently_created_review})"
+                  values ({goods_id}, '{most_recently_created_review}', '{most_recently_created_review}', '{most_recently_created_review}')"
             )
 
         while True:
@@ -287,8 +289,10 @@ def get_goods_review(goods_id):
                         created_at = subtract_date(today, created_at[0])
                     else:
                         created_at = subtract_date(today, created_at[:2])
+            else:
+                created_at = datetime.strptime(created_at, "%Y.%m.%d")
 
-            if created_at <= most_recently_created_review:
+            if created_at.date() <= most_recently_created_review:
                 break
 
             if (
@@ -296,8 +300,8 @@ def get_goods_review(goods_id):
             ):  # 가장 최신 댓글을 가지고 있는 첫 페이지에서만 row값을 업데이트
                 manipulate_data(
                     f"update most_recently_posted_review \
-                      set {category} = TO_DATE('{created_at.strptime('%Y%m%d')}', 'YYYYMMDD') \
+                      set {category} = '{created_at}' \
                       where goods_id = {goods_id}"
                 )
-
+            print(f"{page_num}: {category} is crawled")
             yield reviews.prettify(), page_num, category
