@@ -56,3 +56,11 @@ CREATE TABLE review_word_frequency
     count    integer,
     PRIMARY KEY (goods_id, word)
 );
+
+CREATE TABLE most_recently_posted_review
+(
+    goods_id integer PRIMARY KEY,
+    style date,
+    photo date,
+    goods date
+);
