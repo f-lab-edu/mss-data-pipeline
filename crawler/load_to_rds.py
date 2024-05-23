@@ -1,22 +1,8 @@
-from dotenv import load_dotenv
-import os
-
-import psycopg2
 from datetime import datetime, timezone, timedelta
 
 from crawler.crawl_musinsa import crawl_goods
 from crawler.list_crawler import get_goods_url_from_list_page
-
-
-load_dotenv()
-db = psycopg2.connect(
-    host=os.environ.get("dw_host"),
-    dbname=os.environ.get("dw_dbname"),
-    user=os.environ.get("dw_user"),
-    password=os.environ.get("dw_password"),
-    port=os.environ.get("dw_port"),
-)
-cursor = db.cursor()
+from crawler.util.postgresql import manipulate_data
 
 
 def create_immutable_goods_info_insert_query(goods):
@@ -51,36 +37,25 @@ def create_review_insert_query(goods):
     return queries
 
 
-def call_db(sql):
-    try:
-        print(sql)
-        if isinstance(sql, list):
-            for query in sql:
-                cursor.execute(query)
-        else:
-            cursor.execute(sql)
-    except Exception as e:
-        print(e, goods_url)
-    finally:
-        db.commit()
+if __name__ == "__main__":
+    for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
+        category_id = f"0{i}" if i >= 10 else f"00{i}"
+        url = f"https://www.musinsa.com/categories/item/{category_id}"
+        for goods_url in get_goods_url_from_list_page(url):
+            try:
+                goods = crawl_goods(goods_url)
+            except Exception as e:
+                print(e, goods_url)
+                continue
 
+            immutable_goods_info_insert_query = (
+                create_immutable_goods_info_insert_query(goods)
+            )
+            mutable_goods_info_insert_query = create_mutable_goods_info_insert_query(
+                goods
+            )
+            review_insert_query = create_review_insert_query(goods)
 
-for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
-    category_id = f"0{i}" if i >= 10 else f"00{i}"
-    url = f"https://www.musinsa.com/categories/item/{category_id}"
-    for goods_url in get_goods_url_from_list_page(url):
-        try:
-            goods = crawl_goods(goods_url)
-        except Exception as e:
-            print(e, goods_url)
-            continue
-
-        immutable_goods_info_insert_query = create_immutable_goods_info_insert_query(
-            goods
-        )
-        mutable_goods_info_insert_query = create_mutable_goods_info_insert_query(goods)
-        review_insert_query = create_review_insert_query(goods)
-
-        call_db(immutable_goods_info_insert_query)
-        call_db(mutable_goods_info_insert_query)
-        call_db(review_insert_query)
+            manipulate_data(immutable_goods_info_insert_query)
+            manipulate_data(mutable_goods_info_insert_query)
+            manipulate_data(review_insert_query)
