@@ -258,7 +258,7 @@ def get_goods_review(goods_id):
                 f"insert into most_recently_posted_review \
                   values ({goods_id}, '{most_recently_created_review}', '{most_recently_created_review}', '{most_recently_created_review}')"
             )
-
+        first_comment_date = most_recently_created_review  #
         while True:
             page_num += 1
             url = f"https://goods.musinsa.com/api/goods/v2/review/{category}/list?similarNo={goods_id}&sort=new&selectedSimilarNo={goods_id}&page={page_num}&goodsNo={goods_id}"
@@ -275,7 +275,7 @@ def get_goods_review(goods_id):
             if is_no_review:  # 후기가 없는 페이지일 경우
                 manipulate_data(
                     f"update most_recently_posted_review \
-                      set {category} = '{KST_now().date()}' \
+                      set {category} = '{first_comment_date}' \
                       where goods_id = {goods_id}"
                 )
                 break
@@ -297,15 +297,16 @@ def get_goods_review(goods_id):
             else:
                 created_at = datetime.strptime(created_at, "%Y.%m.%d")
 
-            if created_at.date() <= most_recently_created_review:
+            created_at = created_at.date()
+            if created_at <= most_recently_created_review:
+                manipulate_data(
+                    f"update most_recently_posted_review \
+                      set {category} = '{first_comment_date}' \
+                      where goods_id = {goods_id}"
+                )
                 break
             else:  # 크롤링한 댓글이 더 최신일 경우
                 if page_num == 1:  # 첫 페이지의 날짜로 업데이트 되게끔
-                    manipulate_data(
-                        f"update most_recently_posted_review \
-                          set {category} = '{created_at.date()}' \
-                          where goods_id = {goods_id}"
-                    )
+                    first_comment_date = created_at
 
-            print(f"{page_num}: {category} is crawled")
             yield reviews.prettify(), page_num, category
