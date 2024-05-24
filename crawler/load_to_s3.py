@@ -28,12 +28,13 @@ def get_s3_connection():
         return s3
 
 
-def upload_to_s3(s3, file_name, s3_path):
+def upload_html_to_s3(s3, html, s3_path):
     try:
-        s3.upload_file(
-            file_name,
-            os.getenv("s3_bucket_name"),
-            s3_path,
+        s3.put_object(
+            Bucket=os.getenv("s3_bucket_name"),
+            Key=s3_path,
+            Body=html,
+            ContentType="text/html",
         )
     except Exception as e:
         print(e)
@@ -56,17 +57,13 @@ if __name__ == "__main__":
                 continue
 
             soup = get_soup_object_from_html(goods_html)
-
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write(soup.prettify())
-            upload_to_s3(s3, file_path, f"product_detail/{dt}/{goods_id}.html")
+            upload_html_to_s3(
+                s3, soup.prettify(), f"product_detail/{dt}/{goods_id}.html"
+            )
             print("start crawl review")
             for review, page_num, review_category in get_goods_review(goods_id):
-                with open(file_path, "w", encoding="utf-8") as file:
-                    file.write(review)
-
-                upload_to_s3(
+                upload_html_to_s3(
                     s3,
-                    file_path,
+                    review,
                     f"product_review/{dt}/{goods_id}/{review_category}/{page_num}.html",
                 )
