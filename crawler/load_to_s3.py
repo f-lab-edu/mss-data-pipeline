@@ -42,7 +42,6 @@ def upload_html_to_s3(s3, html, s3_path):
 
 if __name__ == "__main__":
     s3 = get_s3_connection()
-    file_path = "temp.html"
     dt = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
     for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
         category_id = f"0{i}" if i >= 10 else f"00{i}"
