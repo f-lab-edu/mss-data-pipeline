@@ -3,10 +3,11 @@ from datetime import datetime, timezone, timedelta
 from crawler.crawl_musinsa import crawl_goods
 from crawler.list_crawler import get_goods_url_from_list_page
 from crawler.util.postgresql import manipulate_data
+from crawler.util.date import KST_now
 
 
 def create_immutable_goods_info_insert_query(goods):
-    dt = datetime.now(timezone(timedelta(hours=9)))
+    dt = KST_now()
     query = (
         f"INSERT INTO immutable_goods_info(goods_id, name, main_thumbnail_url, regular_price, category, sub_category, brand, created_at) "
         f"VALUES({goods['goods_id']}, '{goods['name']}', '{goods['thumbnail_url']}', {goods['regular_price']}, '{goods['category'][0]}', '{goods['category'][1]}', '{goods['brand']}', '{dt}')"
@@ -15,7 +16,7 @@ def create_immutable_goods_info_insert_query(goods):
 
 
 def create_mutable_goods_info_insert_query(goods):
-    dt = datetime.now(timezone(timedelta(hours=9)))
+    dt = KST_now()
     query = (
         f"INSERT INTO mutable_goods_info(goods_id, sale_price, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
         f"VALUES({goods['goods_id']}, {goods['sale_price']}, {goods['views']}, {goods['sales']}, {goods['likes']}, {goods['star_rating']}, {goods['reviews']}, '{dt}')"
@@ -24,7 +25,7 @@ def create_mutable_goods_info_insert_query(goods):
 
 
 def create_review_insert_query(goods):
-    dt = datetime.now(timezone(timedelta(hours=9)))
+    dt = KST_now()
     queries = []
     for text, url, likes in zip(
         goods["review_content"], goods["review_thumbnail_url"], goods["review_likes"]
