@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from crawler.util.postgresql import select_data, manipulate_data
-from crawler.util.date import subtract_date
+from crawler.util.date import subtract_date, KST_now
 
 
 def crawl_goods(url):
@@ -273,6 +273,11 @@ def get_goods_review(goods_id):
             reviews = get_soup_object_from_html(reviews)
             is_no_review = reviews.find("p", class_="review-list--none__text")
             if is_no_review:  # 후기가 없는 페이지일 경우
+                manipulate_data(
+                    f"update most_recently_posted_review \
+                      set {category} = '{KST_now().date()}' \
+                      where goods_id = {goods_id}"
+                )
                 break
 
             created_at = reviews.find("p", class_="review-profile__date").text
@@ -281,7 +286,7 @@ def get_goods_review(goods_id):
                 break
 
             if created_at[-1] == "전":
-                today = datetime.now()
+                today = KST_now()
                 if "시간" in created_at:
                     created_at = subtract_date(today, 1)
                 else:
@@ -294,14 +299,13 @@ def get_goods_review(goods_id):
 
             if created_at.date() <= most_recently_created_review:
                 break
+            else:  # 크롤링한 댓글이 더 최신일 경우
+                if page_num == 1:  # 첫 페이지의 날짜로 업데이트 되게끔
+                    manipulate_data(
+                        f"update most_recently_posted_review \
+                          set {category} = '{created_at.date()}' \
+                          where goods_id = {goods_id}"
+                    )
 
-            if (
-                page_num == 1
-            ):  # 가장 최신 댓글을 가지고 있는 첫 페이지에서만 row값을 업데이트
-                manipulate_data(
-                    f"update most_recently_posted_review \
-                      set {category} = '{created_at}' \
-                      where goods_id = {goods_id}"
-                )
             print(f"{page_num}: {category} is crawled")
             yield reviews.prettify(), page_num, category
