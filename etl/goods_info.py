@@ -7,7 +7,7 @@ from crawler.load_to_rds import (
 from util.date import KST_now
 from util.postgresql import manipulate_data
 from util.s3 import get_s3_connection
-from crawler.process_goods_html import process_goods_html
+from crawler.process_goods_html import process_goods_info_html
 
 
 s3 = get_s3_connection()
@@ -21,7 +21,7 @@ if "Contents" in response:
         print(file_key)
         obj = s3.get_object(Bucket=os.getenv("s3_bucket_name"), Key=file_key)
         file_content = obj["Body"].read().decode("utf-8")
-        goods_info = process_goods_html(file_content)
+        goods_info = process_goods_info_html(file_content)
         goods_info["goods_id"] = file_key.split("/")[-1].split(".")[0]
         immutable_goods_info_insert_query = create_immutable_goods_info_insert_query(
             goods_info
