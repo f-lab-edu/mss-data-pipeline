@@ -3,7 +3,7 @@ import re
 from bs4 import BeautifulSoup
 
 
-def process_goods_html(html):
+def process_goods_info_html(html):
     soup = get_soup_object_from_html(html)
     goods_detail = get_detail_segment_from_soup_object(soup)
     goods_info = goods_detail.find(
@@ -29,6 +29,16 @@ def process_goods_html(html):
     goods["reviews"] = get_goods_reviews(infos)
 
     return goods
+
+
+def process_goods_review_html(html):
+    goods_review = {}
+    soup = get_soup_object_from_html(html)
+    review = get_review_segment_from_soup_object(soup)
+    goods_review["review_content"] = get_goods_review_content(review)
+    goods_review["review_thumbnail_url"] = get_goods_review_thumbnail_url(review)
+
+    return goods_review
 
 
 def get_soup_object_from_html(html):
@@ -171,3 +181,41 @@ def get_goods_reviews(infos):
     # )
     # reviews = reviews.get_text()
     # return reviews
+
+
+def get_review_segment_from_soup_object(soup):
+    review = soup.find("div", attrs={"class": "review-list-wrap"}).find_all(
+        "div", attrs={"class": "review-list"}
+    )
+
+    return review
+
+
+def get_goods_review_content(goods_reviews):
+    content = [
+        re.sub(
+            r"\s{4,}",
+            "\n",
+            goods_review.find("div", "review-contents__text")
+            .get_text(separator="\n")
+            .strip(),
+        )
+        for goods_review in goods_reviews
+    ]
+    return content
+
+
+def get_goods_review_thumbnail_url(goods_reviews):
+    img_url = []
+    for goods_review in goods_reviews:
+        try:
+            img_src = (
+                goods_review.find("li", "review-content-photo__item")
+                .find("img")
+                .get("src")
+                .strip()
+            )
+            img_url.append("https:" + img_src)
+        except AttributeError:
+            img_url.append("NULL")
+    return img_url
