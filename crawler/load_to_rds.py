@@ -1,9 +1,7 @@
-from datetime import datetime, timezone, timedelta
-
 from crawler.crawl_musinsa import crawl_goods
 from crawler.list_crawler import get_goods_url_from_list_page
-from crawler.util.postgresql import manipulate_data
-from crawler.util.date import KST_now
+from util.postgresql import manipulate_data
+from util.date import KST_now
 
 
 def create_immutable_goods_info_insert_query(goods):

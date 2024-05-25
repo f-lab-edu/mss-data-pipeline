@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -7,8 +7,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from crawler.util.postgresql import select_data, manipulate_data
-from crawler.util.date import subtract_date, KST_now
+from util.postgresql import select_data, manipulate_data
+from util.date import subtract_date, KST_now
 
 
 def crawl_goods(url):
