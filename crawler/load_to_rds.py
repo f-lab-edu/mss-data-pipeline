@@ -24,16 +24,13 @@ def create_mutable_goods_info_insert_query(goods):
 
 def create_review_insert_query(goods):
     dt = KST_now()
-    queries = []
-    for text, url, likes in zip(
-        goods["review_content"], goods["review_thumbnail_url"], goods["review_likes"]
-    ):
-        queries.append(
-            f"INSERT INTO review(review_id, goods_id, content, main_thumbnail_url, likes, created_at)"
-            f"VALUES(hashtext('{text}'), {goods['goods_id']}, E'{text}', '{url}', {likes}, '{dt}')"
+    query = f"INSERT INTO review(review_id, goods_id, content, main_thumbnail_url, created_at) VALUES"
+    for text, url in zip(goods["review_content"], goods["review_thumbnail_url"]):
+        query += (
+            f" (hashtext('{text}'), {goods['goods_id']}, E'{text}', '{url}', '{dt}'),"
         )
 
-    return queries
+    return query[:-1]
 
 
 if __name__ == "__main__":
