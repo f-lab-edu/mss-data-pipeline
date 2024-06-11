@@ -5,4 +5,4 @@
 ![data model](./images/ERD_latest.png)
 
 # architecture
-![architecture of pipeline](./images/pipeline_architecture.png)
+![architecture of pipeline](./images/pipeline_architecture_latest.png)
