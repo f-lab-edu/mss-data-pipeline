@@ -1,10 +1,20 @@
 import os
 
-from crawler.load_to_rds import create_review_insert_query
 from crawler.process_goods_html import process_goods_review_html
 from util.date import KST_now
 from util.postgresql import manipulate_data
 from util.s3 import get_s3_connection
+
+
+def create_review_insert_query(goods):
+    dt = KST_now()
+    query = f"INSERT INTO review(review_id, goods_id, content, main_thumbnail_url, created_at) VALUES"
+    for text, url in zip(goods["review_content"], goods["review_thumbnail_url"]):
+        query += (
+            f" (hashtext('{text}'), {goods['goods_id']}, E'{text}', '{url}', '{dt}'),"
+        )
+
+    return query[:-1]
 
 
 s3 = get_s3_connection()
