@@ -1,13 +1,27 @@
 import os
 
-from crawler.load_to_rds import (
-    create_immutable_goods_info_insert_query,
-    create_mutable_goods_info_insert_query,
-)
 from util.date import KST_now
 from util.postgresql import manipulate_data
 from util.s3 import get_s3_connection
 from crawler.process_goods_html import process_goods_info_html
+
+
+def create_immutable_goods_info_insert_query(goods):
+    dt = KST_now()
+    query = (
+        f"INSERT INTO immutable_goods_info(goods_id, name, main_thumbnail_url, regular_price, category, sub_category, brand, created_at) "
+        f"VALUES({goods['goods_id']}, '{goods['name']}', '{goods['thumbnail_url']}', {goods['regular_price']}, '{goods['category'][0]}', '{goods['category'][1]}', '{goods['brand']}', '{dt}')"
+    )
+    return query
+
+
+def create_mutable_goods_info_insert_query(goods):
+    dt = KST_now()
+    query = (
+        f"INSERT INTO mutable_goods_info(goods_id, sale_price, views_in_recent_month, sales_in_recent_year, likes, star_rating, reviews, created_at) "
+        f"VALUES({goods['goods_id']}, {goods['sale_price']}, {goods['views']}, {goods['sales']}, {goods['likes']}, {goods['star_rating']}, {goods['reviews']}, '{dt}')"
+    )
+    return query
 
 
 s3 = get_s3_connection()
