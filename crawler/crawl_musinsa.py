@@ -24,7 +24,7 @@ def get_page_html_from_url(url):
     browser = webdriver.Chrome(options=chrome_option)
     browser.get(url)
     WebDriverWait(browser, 20).until(
-        EC.presence_of_element_located((By.ID, "wrap-estimate-list"))
+        EC.presence_of_element_located((By.CLASS_NAME, "wrap-estimate-list"))
     )
 
     html = browser.page_source
