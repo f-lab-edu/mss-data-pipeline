@@ -24,11 +24,13 @@ def create_mutable_goods_info_insert_query(goods):
     return query
 
 
-def process_goods_info(s3, date):
-    s3_conn = s3
+def process_goods_info(date):
+    s3_conn = get_s3_connection()
     response = s3_conn.list_objects_v2(
         Bucket=os.getenv("s3_bucket_name"), Prefix=f"product_detail/{date}/"
     )
+
+    print(f"start processing goods html crawled at {date}")
     if "Contents" in response:
         files = response["Contents"]
         for file in files:
@@ -53,5 +55,4 @@ def process_goods_info(s3, date):
 
 
 if __name__ == "__main__":
-    s3 = get_s3_connection()
-    process_goods_info(s3, KST_now())
+    process_goods_info(KST_now())
