@@ -9,7 +9,7 @@ from crawler.list_crawler import get_goods_url_from_list_page
 from util.s3 import get_s3_connection, upload_html_to_s3
 
 
-if __name__ == "__main__":
+def load_to_s3():
     s3 = get_s3_connection()
     dt = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
     for i in range(1, 22):  # 무신사 사이트의 대분류는 1~21
@@ -35,3 +35,7 @@ if __name__ == "__main__":
                     review,
                     f"product_review/{dt}/{goods_id}/{review_category}/{page_num}.html",
                 )
+
+
+if __name__ == "__main__":
+    load_to_s3()
