@@ -26,3 +26,6 @@ Thumbs.db
 
 # data 파일
 *.csv
+
+# log 파일들
+logs/
